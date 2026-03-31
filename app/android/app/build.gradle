@@ -59,20 +59,31 @@ android {
         release {
             def keystoreProperties = new Properties()
             def keystorePropertiesFile = rootProject.file('key.properties')
+            def hasValidConfig = false
+            
             if (keystorePropertiesFile.exists()) {
                 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+                // 检查所有必需的签名属性是否存在
+                hasValidConfig = keystoreProperties['storeFile'] != null &&
+                                keystoreProperties['keyAlias'] != null &&
+                                keystoreProperties['keyPassword'] != null &&
+                                keystoreProperties['storePassword'] != null &&
+                                file(keystoreProperties['storeFile']).exists()
             }
 
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            if (hasValidConfig) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // 只有当 release 签名配置有效时才使用，否则使用 debug 签名
+            signingConfig signingConfigs.release.storeFile != null ? signingConfigs.release : signingConfigs.debug
         }
         debug {
             applicationIdSuffix ".debug"
