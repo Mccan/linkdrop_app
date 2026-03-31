@@ -406,7 +406,9 @@ jobs:
 
       - name: Compile for macOS
         working-directory: app
-        run: flutter build macos --release --no-codesign
+        env:
+          CODE_SIGNING_ALLOWED: "0"
+        run: flutter build macos --release
 
       - name: Zip compiled files
         working-directory: app
