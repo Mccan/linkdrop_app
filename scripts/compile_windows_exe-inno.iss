@@ -3,11 +3,11 @@
 ; Copy the contents of the zip to D:\inno, then run this Inno script
 ; Copy app/assets/packaging/logo-256.ico to D:\inno\logo-256.ico
 
-#define MyAppName "LocalSend"
+#define MyAppName "LinkDrop"
 #define MyAppVersion "1.17.0"
 #define MyAppPublisher "Tien Do Nam"
-#define MyAppURL "https://localsend.org"
-#define MyAppExeName "localsend_app.exe"
+#define MyAppURL "https://linkdrop.dearlinkcn.top/"
+#define MyAppExeName "linkdrop_app.exe"
 #define MyAppMsixHelper "localsend_msix_helper.msix"
 
 [Setup]
@@ -27,7 +27,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=D:\inno-result
-OutputBaseFilename=localsend
+OutputBaseFilename=linkdrop
 SetupIconFile=D:\inno\logo.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma

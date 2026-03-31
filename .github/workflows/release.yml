@@ -78,16 +78,16 @@ jobs:
 
       - name: Build APK
         working-directory: ${{ env.APK_BUILD_DIR }}/app
-        run: flutter build apk --split-per-abi --debug
+        run: flutter build apk --split-per-abi --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: apk-result
           path: |
-            ${{ env.APK_BUILD_DIR }}/app/build/app/outputs/flutter-apk/app-armeabi-v7a-debug.apk
-            ${{ env.APK_BUILD_DIR }}/app/build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk
-            ${{ env.APK_BUILD_DIR }}/app/build/app/outputs/flutter-apk/app-x86_64-debug.apk
+            ${{ env.APK_BUILD_DIR }}/app/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            ${{ env.APK_BUILD_DIR }}/app/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            ${{ env.APK_BUILD_DIR }}/app/build/app/outputs/flutter-apk/app-x86_64-release.apk
 
   build_tar_x86_64:
     needs: build
@@ -368,13 +368,13 @@ jobs:
 
       - name: Zip compiled files
         working-directory: app
-        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath LocalSend.zip
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath LinkDrop.zip
 
       - name: Upload zip
         uses: actions/upload-artifact@v4
         with:
           name: windows-zip-x86-64-result
-          path: app/LocalSend.zip
+          path: app/LinkDrop.zip
 
   build_macos_zip_x86_64:
     needs: build
@@ -404,11 +404,46 @@ jobs:
         working-directory: app
         run: flutter pub get
 
+      - name: Prepare macOS build
+        working-directory: app
+        run: flutter build macos --release --config-only
+
       - name: Compile for macOS
         working-directory: app
-        env:
-          CODE_SIGNING_ALLOWED: "0"
-        run: flutter build macos --release
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          source = Path("macos/Runner/Release.entitlements")
+          target = Path("build/macos/ReleaseWithDisabledSandboxing.entitlements")
+          target.parent.mkdir(parents=True, exist_ok=True)
+
+          contents = source.read_text(encoding="utf-8")
+          target.write_text(
+              contents.replace(
+                  "<key>com.apple.security.app-sandbox</key>\n\t<true/>",
+                  "<key>com.apple.security.app-sandbox</key>\n\t<false/>",
+              ),
+              encoding="utf-8",
+          )
+          PY
+
+          xcrun xcodebuild \
+            -workspace macos/Runner.xcworkspace \
+            -configuration Release \
+            -scheme Runner \
+            -derivedDataPath build/macos \
+            -destination "generic/platform=macOS" \
+            "OBJROOT=$PWD/build/macos/Build/Intermediates.noindex" \
+            "SYMROOT=$PWD/build/macos/Build/Products" \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            "CODE_SIGN_IDENTITY=" \
+            CODE_SIGN_STYLE=Manual \
+            "DEVELOPMENT_TEAM=" \
+            "PROVISIONING_PROFILE_SPECIFIER=" \
+            "CODE_SIGN_ENTITLEMENTS=$PWD/build/macos/ReleaseWithDisabledSandboxing.entitlements"
 
       - name: Zip compiled files
         working-directory: app
@@ -464,7 +499,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: app-armeabi-v7a-release.apk
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-android-arm32v7.apk
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-android-arm32v7.apk
           asset_content_type: application/vnd.android.package-archive
 
       - name: Upload Release Asset (arm64v8)
@@ -474,7 +509,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: app-arm64-v8a-release.apk
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-android-arm64v8.apk
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-android-arm64v8.apk
           asset_content_type: application/vnd.android.package-archive
 
       - name: Upload Release Asset (x64)
@@ -484,7 +519,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: app-x86_64-release.apk
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-android-x64.apk
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-android-x64.apk
           asset_content_type: application/vnd.android.package-archive
 
       # TAR.GZ (x86_64)
@@ -507,7 +542,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: result.tar.gz
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-linux-x86-64.tar.gz
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-linux-x86-64.tar.gz
           asset_content_type: application/gzip
 
       # TAR.GZ (arm_64)
@@ -530,7 +565,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: result.tar.gz
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-linux-arm-64.tar.gz
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-linux-arm-64.tar.gz
           asset_content_type: application/gzip
 
       # DEB (x86_64)
@@ -550,7 +585,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: result.deb
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-linux-x86-64.deb
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-linux-x86-64.deb
           asset_content_type: application/vnd.debian.binary-package
 
       # DEB (arm_64)
@@ -570,7 +605,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: result.deb
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-linux-arm-64.deb
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-linux-arm-64.deb
           asset_content_type: application/vnd.debian.binary-package
 
       # APPIMAGE (x86_64)
@@ -598,7 +633,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: result.AppImage
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-linux-x86-64.AppImage
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-linux-x86-64.AppImage
           asset_content_type: application/x-appimage
 
       # WINDOWS ZIP (x86_64)
@@ -618,5 +653,25 @@ jobs:
         with:
           upload_url: ${{ steps.draft_release.outputs.upload_url }}
           asset_path: result.zip
-          asset_name: LocalSend-${{ needs.build.outputs.version }}-windows-x86-64.zip
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-windows-x86-64.zip
+          asset_content_type: application/zip
+
+      # MACOS ZIP
+      - name: Download macOS zip file
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-zip-x86-64-result
+          path: macos-zip-x86-64-result
+
+      - name: Copy macOS zip file to root
+        run: cp macos-zip-x86-64-result/*.zip result-macos.zip
+
+      - name: Upload Release Asset (macOS)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft_release.outputs.upload_url }}
+          asset_path: result-macos.zip
+          asset_name: LinkDrop-${{ needs.build.outputs.version }}-macos.zip
           asset_content_type: application/zip

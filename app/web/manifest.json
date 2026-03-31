@@ -1,11 +1,11 @@
 {
-  "name": "localsend_app",
-  "short_name": "localsend_app",
+  "name": "LinkDrop",
+  "short_name": "LinkDrop",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
-  "description": "A new Flutter project.",
+  "description": "LinkDrop - 跨平台热点、局域网传输工具",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [
