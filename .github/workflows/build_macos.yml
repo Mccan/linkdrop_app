@@ -50,14 +50,46 @@ jobs:
         working-directory: app
         run: flutter pub get
 
+      - name: Prepare macOS build
+        working-directory: app
+        run: flutter build macos --release --config-only
+
       - name: Compile for macOS
         working-directory: app
         run: |
-          # Build with code signing disabled via xcodebuild arguments
-          flutter build macos --release \
-            --build-arg="CODE_SIGNING_ALLOWED=NO" \
-            --build-arg="CODE_SIGN_IDENTITY=" \
-            --build-arg="DEVELOPMENT_TEAM="
+          python3 - <<'PY'
+          from pathlib import Path
+
+          source = Path("macos/Runner/Release.entitlements")
+          target = Path("build/macos/ReleaseWithDisabledSandboxing.entitlements")
+          target.parent.mkdir(parents=True, exist_ok=True)
+
+          contents = source.read_text(encoding="utf-8")
+          target.write_text(
+              contents.replace(
+                  "<key>com.apple.security.app-sandbox</key>\n\t<true/>",
+                  "<key>com.apple.security.app-sandbox</key>\n\t<false/>",
+              ),
+              encoding="utf-8",
+          )
+          PY
+
+          xcrun xcodebuild \
+            -workspace macos/Runner.xcworkspace \
+            -configuration Release \
+            -scheme Runner \
+            -derivedDataPath build/macos \
+            -destination "generic/platform=macOS" \
+            "OBJROOT=$PWD/build/macos/Build/Intermediates.noindex" \
+            "SYMROOT=$PWD/build/macos/Build/Products" \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            "CODE_SIGN_IDENTITY=" \
+            CODE_SIGN_STYLE=Manual \
+            "DEVELOPMENT_TEAM=" \
+            "PROVISIONING_PROFILE_SPECIFIER=" \
+            "CODE_SIGN_ENTITLEMENTS=$PWD/build/macos/ReleaseWithDisabledSandboxing.entitlements"
 
       - name: Zip compiled files
         working-directory: app
