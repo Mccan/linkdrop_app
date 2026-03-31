@@ -27,7 +27,7 @@ abstract class PaymentApi {
 class ApiService implements PaymentApi {
   // 开发环境使用局域网 IP，方便真机调试
   // static const String _devBaseUrl = 'http://localhost:3000/api';
-  static const String _devBaseUrl = 'http://192.168.0.101:3000/api';
+  static const String _devBaseUrl = 'http://192.168.0.102:3000/api';
   static const String _prodBaseUrl = 'https://toolapi.dearlinkcn.top/api';
 
   static String get _baseUrl {
