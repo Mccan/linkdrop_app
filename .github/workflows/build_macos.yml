@@ -53,16 +53,23 @@ jobs:
       - name: Disable code signing in Xcode project
         working-directory: app/macos
         run: |
-          # Disable code signing for Runner target
-          sed -i '' 's/DEVELOPMENT_TEAM = 3W7H4PYMCV;/DEVELOPMENT_TEAM = "";/g' Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/CODE_SIGN_IDENTITY = "Mac Developer";/CODE_SIGN_IDENTITY = "";/g' Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/CODE_SIGN_IDENTITY = "Developer ID Application";/CODE_SIGN_IDENTITY = "";/g' Runner.xcodeproj/project.pbxproj
-          # Disable code signing for ShareExtension target
-          sed -i '' 's/DEVELOPMENT_TEAM = 3W7H4PYMCV;/DEVELOPMENT_TEAM = "";/g' Runner.xcodeproj/project.pbxproj
+          # Check current signing settings
+          grep -n "DEVELOPMENT_TEAM\|CODE_SIGN" Runner.xcodeproj/project.pbxproj | head -20
+          # Disable code signing by setting to empty
+          sed -i '' 's/DEVELOPMENT_TEAM = 3W7H4PYMCV;/DEVELOPMENT_TEAM = ""/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Mac Developer";/CODE_SIGN_IDENTITY = ""/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Developer ID Application";/CODE_SIGN_IDENTITY = ""/g' Runner.xcodeproj/project.pbxproj
+          # Also try with single quotes variation
+          sed -i '' "s/DEVELOPMENT_TEAM = 3W7H4PYMCV;/DEVELOPMENT_TEAM = '';/g" Runner.xcodeproj/project.pbxproj
+          # Verify changes
+          echo "After modification:"
+          grep -n "DEVELOPMENT_TEAM\|CODE_SIGN" Runner.xcodeproj/project.pbxproj | head -20
 
       - name: Compile for macOS
         working-directory: app
-        run: flutter build macos --release
+        run: |
+          # Build with explicit code signing disabled
+          flutter build macos --release --dart-define=CODE_SIGNING_ALLOWED=NO
 
       - name: Zip compiled files
         working-directory: app
