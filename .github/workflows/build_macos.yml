@@ -50,10 +50,18 @@ jobs:
         working-directory: app
         run: flutter pub get
 
+      - name: Disable code signing in Xcode project
+        working-directory: app/macos
+        run: |
+          # Disable code signing for Runner target
+          sed -i '' 's/DEVELOPMENT_TEAM = 3W7H4PYMCV;/DEVELOPMENT_TEAM = "";/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Mac Developer";/CODE_SIGN_IDENTITY = "";/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Developer ID Application";/CODE_SIGN_IDENTITY = "";/g' Runner.xcodeproj/project.pbxproj
+          # Disable code signing for ShareExtension target
+          sed -i '' 's/DEVELOPMENT_TEAM = 3W7H4PYMCV;/DEVELOPMENT_TEAM = "";/g' Runner.xcodeproj/project.pbxproj
+
       - name: Compile for macOS
         working-directory: app
-        env:
-          CODE_SIGNING_ALLOWED: "0"
         run: flutter build macos --release
 
       - name: Zip compiled files
