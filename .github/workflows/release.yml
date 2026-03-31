@@ -376,6 +376,50 @@ jobs:
           name: windows-zip-x86-64-result
           path: app/LocalSend.zip
 
+  build_macos_zip_x86_64:
+    needs: build
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: ${{ env.RUST_VERSION }}
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "app/rust_builder"
+
+      - name: Dependencies
+        working-directory: app
+        run: flutter pub get
+
+      - name: Compile for macOS
+        working-directory: app
+        run: flutter build macos --release
+
+      - name: Zip compiled files
+        working-directory: app
+        run: |
+          cd build/macos/Build/Products/Release
+          zip -r ../../../../../LinkDrop-macOS.zip LinkDrop.app
+
+      - name: Upload zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-zip-x86-64-result
+          path: app/LinkDrop-macOS.zip
+
   release:
     needs:
       - build
@@ -386,6 +430,7 @@ jobs:
       - build_deb_arm_64
       - build_appimage_x86_64
       - build_windows_zip_x86_64
+      - build_macos_zip_x86_64
     runs-on: ubuntu-24.04
 
     steps:
