@@ -1,0 +1,455 @@
+{
+  "locale": "Mongolian",
+  "appName": "LinkDrop",
+  "general": {
+    "accept": "Зөвшөөрөх",
+    "accepted": "Зөвшөөрсөн",
+    "add": "Нэмэх",
+    "advanced": "Нэмэлт үйлчилгээ",
+    "cancel": "Цуцлах",
+    "close": "Хаах",
+    "confirm": "Баталгаажуулах",
+    "continueStr": "Үргэлжлүүлэх",
+    "copy": "Хуулах",
+    "copiedToClipboard": "Амжилттай хууллаа",
+    "decline": "Татгалзах",
+    "done": "Болсон",
+    "delete": "Устгах",
+    "edit": "Өөрчлөх",
+    "error": "Алдаа",
+    "example": "Жишээ",
+    "files": "Файлууд",
+    "finished": "Дууссан",
+    "hide": "Нуух",
+    "off": "Унтраах",
+    "offline": "Оффлайн",
+    "on": "Асаах",
+    "online": "Онлайн",
+    "open": "Нээх",
+    "queue": "Хүлээгдэж байгаа",
+    "quickSave": "Шууд хадгалах",
+    "quickSaveFromFavorites": "\"Одод\"-ийн хурдан хадгалах",
+    "renamed": "Дахин нэрлэсэн",
+    "reset": "Өөрчлөлтүүдийг буцаах",
+    "restart": "Дахин ачаалах",
+    "settings": "Тохиргоо",
+    "skipped": "Алгассан",
+    "start": "Эхлэх",
+    "stop": "Зогсоох",
+    "save": "Хадгалах",
+    "unchanged": "Өөрчлөгдөөгүй",
+    "unknown": "Үл мэдэгдэх",
+    "noItemInClipboard": "Санах ой хоосон байна."
+  },
+  "receiveTab": {
+    "title": "Авах",
+    "infoBox": {
+      "ip": "IP хаяг:",
+      "port": "Порт:",
+      "alias": "Төхөөрөмжийн нэр:"
+    },
+    "quickSave": {
+      "off": "@:general.off",
+      "favorites": "Хадгалсан",
+      "on": "@:general.on"
+    }
+  },
+  "sendTab": {
+    "title": "Илгээх",
+    "selection": {
+      "title": "Сонголт",
+      "files": "Файлууд: {files}",
+      "size": "Хэмжээ: {size}"
+    },
+    "picker": {
+      "file": "Файл",
+      "folder": "Хавтас",
+      "media": "Медиа",
+      "text": "Бичвэр",
+      "app": "Апп",
+      "clipboard": "Санах ойгоос буулгах"
+    },
+    "shareIntentInfo": "Та өөрийн төхөөрөмжийн \"Хуваалцах\" цэсийг ашиглан файлуудаа хялбар сонгох боломжтой.",
+    "nearbyDevices": "Ойролцоо төхөөрөмжүүд",
+    "thisDevice": "Энэ төхөөрөмж",
+    "scan": "Төхөөрөмжүүд хайх",
+    "manualSending": "Гар аргаар хайх",
+    "sendMode": "Илгээх горим",
+    "sendModes": {
+      "single": "Ганц хүлээн авагч",
+      "multiple": "Олон хүлээн авагч",
+      "link": "Холбоосоор хуваалцах"
+    },
+    "sendModeHelp": "Тайлбар",
+    "help": "Хүлээн авах төхөөрөмжийг адилхан Wi-Fi сүлжээнд байгаа эсэхийг шалгана уу.",
+    "placeItems": "Хуваалцах зүйлсээ орулна уу."
+  },
+  "settingsTab": {
+    "title": "Тохиргоо",
+    "general": {
+      "title": "Ерөнхий",
+      "brightness": "Үзэмж",
+      "brightnessOptions": {
+        "system": "Систем",
+        "dark": "Харанхуй",
+        "light": "Гэгээлэг"
+      },
+      "color": "Өнгө",
+      "colorOptions": {
+        "system": "Систем",
+        "oled": "OLED"
+      },
+      "language": "Хэл",
+      "languageOptions": {
+        "system": "Систем"
+      },
+      "saveWindowPlacement": "Гарсаны дараа цонхны байрлал хадгалах",
+      "saveWindowPlacementWindows": "Гарсаны дараа цонхны байрлал хадгалах",
+      "minimizeToTray": "Цонх хаах үед програмыг нуух",
+      "launchAtStartup": "Нэвтрэх үед хамт нээх",
+      "launchMinimized": "Авто эхлүүлэх: Нуугдсан эхлэх",
+      "showInContextMenu": "Системийн цэсэнд LinkDrop-д харуулах",
+      "animations": "Анимэйшн"
+    },
+    "receive": {
+      "title": "Авах",
+      "quickSave": "@:general.quickSave",
+      "quickSaveFromFavorites": "@:general.quickSaveFromFavorites",
+      "requirePin": "@:webSharePage.requirePin",
+      "autoFinish": "Авто-дуусгах",
+      "destination": "Хавтаст хадгалах",
+      "downloads": "(Татсан файлууд)",
+      "saveToGallery": "Зургийн санд хадгалах",
+      "saveToHistory": "Түүхэнд хадгалах"
+    },
+    "send": {
+      "title": "Илгээх",
+      "shareViaLinkAutoAccept": "\"Холбоосоор илгээх\" горимын хүсэлтүүдийн шууд зөвшөөрөх"
+    },
+    "network": {
+      "title": "Сүлжээ",
+      "needRestart": "Серверийг дахин ачаалж тохиргоог идэвхжүүлнэ үү!",
+      "server": "Сервер",
+      "alias": "Төхөөрөмжийн нэр",
+      "deviceType": "Төхөөрөмжийн төрөл",
+      "deviceModel": "Төхөөрөмжийг модел",
+      "port": "Порт",
+      "network": "Сүлжээ",
+      "networkOptions": {
+        "all": "Бүгд",
+        "filtered": "Шүүгдсэн"
+      },
+      "discoveryTimeout": "Хайх хүчинтэй хугацаа",
+      "useSystemName": "Системийн нэр ашиглах",
+      "generateRandomAlias": "Санамсаргүй түрээс үүсгэх",
+      "portWarning": "Та өөр порт ашиглаж байгаа тул бусад төхөөрөмжинд олдохгүй байж магадгүй . (өгөгдмөл: {defaultPort})",
+      "encryption": "Нууцлал",
+      "multicastGroup": "Мультикаст хаяг",
+      "multicastGroupWarning": "Хувийн multicast хаяг ашиглаж үед бусад төхөөрөмжид илрэхгүй байх магадлалтай. (default: {defaultMulticast})"
+    },
+    "other": {
+      "title": "Бусад",
+      "support": "LinkDrop-г дэмжих",
+      "donate": "Хандив өгөх",
+      "privacyPolicy": "Нууцлалын бодлого",
+      "termsOfUse": "Ашиглах нөхцөл"
+    },
+    "advancedSettings": "Нэмэлт тохиргоо"
+  },
+  "troubleshootPage": {
+    "title": "Асуудал илрүүлэх",
+    "subTitle": "Апп нь санаснаар ажиллахгүй байна уу? Эндээс асуудлыг нийтлэг асуудалуудыг олох боломжтой.",
+    "solution": "Шийдэл:",
+    "fixButton": "Автоматаар засварлах",
+    "firewall": {
+      "symptom": "Энэ төрөөрөмж бусадруу файл илгээж чадаж байгаа ч бусад төхөөрөмж энэ төхөөрөмжрүү илгээж чадахгүй байна.",
+      "solution": "Энэ нь ихэвчлэн firewall-н асуудл байдаг. Та {port} дээр ирж буй холболтыг (UDP ба TCP) зөвшөөрч шийдвэрлэх боломжтой.",
+      "openFirewall": "Firewall-г нээх"
+    },
+    "noDiscovery": {
+      "symptom": "Энэ төхөөрөмж бусад төхөөрөмжийг илрүүлж чадахгүй байна.",
+      "solution": "Бүх төхөөрөмж адилхан Wi-Fi сүлжээнд орсон, адилхан тохиргоотой (порт, мультикаст хаяг, нууцлал) эсэхийг шалгана уу. Мөн төхөөрөмжийн IP хаягийг гараар оруулж үзнэ үү. Хэрэв болж байвал тухайн төхөөрөмжийг \"Хадгалсан\" хэсэгт нэмж дараа нь автоматаар таниулаарай."
+    },
+    "noConnection": {
+      "symptom": "Төхөөрөмжүүд бие биенийгээ танихгүй, файл хуваалцаж чадахгүй байна.",
+      "solution": "Хоёр талдаа ажиллахгүй байна уу? Хэрэв тийм бол хоёр төхөөрөмж ижил Wi-Fi сүлжээнд байгаа эсэхийг эсвэл ижил тохиргоотой (порт, multicast хаяг, шифрлэлт) байгаа эсэхийг шалгана уу. Wi-Fi сүлжээ эсвэл Acess Point (AP) төхөөрөмж хоорондын харилцааг хаасан байж магадгүй. Энэ тохиолдолд Wi-Fi төхөөрөмжийн тохиргоог өөрчлөнө үү."
+    }
+  },
+  "networkInterfacesPage": {
+    "title": "Сүлжээний интерфейсүүд",
+    "info": "Анхны тохиолдолд LinkDrop бүх боломжтой сүлжээний интерфейсүүдийг ашигладаг. Энд хүссэн сүлжээнүүдийг татваргаж болно. Өөрчлөлтийг хэрэгжүүлэхийн тулд серверийг дахин эхлүүлэх хэрэгтэй.",
+    "preview": "Урьдчилсан үзэх",
+    "whitelist": "Зөвшөөрөгдсөн жагсаалт",
+    "blacklist": "Хориглогдсон жагсаалт"
+  },
+  "receiveHistoryPage": {
+    "title": "Түүх",
+    "openFolder": "Хавтас нээх",
+    "deleteHistory": "Түүх устгах",
+    "empty": "Түүх хоосон байна.",
+    "entryActions": {
+      "open": "Файл нээх",
+      "showInFolder": "Хавтаст харуулах",
+      "info": "Мэдээлэл",
+      "deleteFromHistory": "Түүхээс устгах"
+    }
+  },
+  "apkPickerPage": {
+    "title": "Аппууд (APK)",
+    "excludeSystemApps": "Системийн аппуудыг хасах",
+    "excludeAppsWithoutLaunchIntent": "Нээх боломжгүй аппуудыг хасах",
+    "apps": "{n} апп"
+  },
+  "selectedFilesPage": {
+    "deleteAll": "Бүгдийг устгах"
+  },
+  "receivePage": {
+    "subTitle": {
+      "one": "танруу файл явуулахыг хүсэж байна",
+      "other": "танруу {n} файл явуулахыг хүсэж байна"
+    },
+    "subTitleMessage": "танруу зурвас илгээлээ:",
+    "subTitleLink": "танруу холбоос илгээлээ:",
+    "canceled": "Илгээгч хүсэлтийг цуцалсан байна."
+  },
+  "receiveOptionsPage": {
+    "title": "Сонголтын тохиргоо",
+    "destination": "@:settingsTab.receive.destination",
+    "appDirectory": "(LinkDrop-н хавтас)",
+    "saveToGallery": "@:settingsTab.receive.saveToGallery",
+    "saveToGalleryOff": "Хавтсууд байгаа учир автоматаар унтраалаа."
+  },
+  "sendPage": {
+    "waiting": "Хариу хүлээж байна…",
+    "rejected": "Хүлээн авагч хүсэлтйиг татгалзлаа.",
+    "tooManyAttempts": "@:web.tooManyAttempts",
+    "busy": "Хүлээн авагч өөр хүсэлт авсан тул завгүй байна."
+  },
+  "progressPage": {
+    "titleSending": "Файлууд илгээж байна",
+    "titleReceiving": "Файлыг татаж байна",
+    "savedToGallery": "Photos дээр амжилттай хадгаллаа",
+    "total": {
+      "title": {
+        "sending": "Нийт хугацаа ({time})",
+        "finishedError": "Амжилтгүй болсон",
+        "canceledSender": "Явуулж байгаа хүн цуцаллаа",
+        "canceledReceiver": "Хүлээн авагчийн хүсэлтээр цуцалсан"
+      },
+      "count": "Файл: {curr} / {n}",
+      "size": "Хэмжээ: {curr} / {n}",
+      "speed": "Хурд: {speed}/s"
+    }
+  },
+  "webSharePage": {
+    "title": "Линкээр хуваалцах",
+    "loading": "Сервер эхлүүлж байна…",
+    "stopping": "Серверийг зогсоож байна…",
+    "error": "Сервер асаахад алдаа гарлаа.",
+    "openLink": {
+      "one": "Энэ холбоосыг browser дээрээ нээнэ үү:",
+      "other": "Уг линкийн аль нэгрүү орно уу:"
+    },
+    "requests": "Хүсэлтүүд",
+    "noRequests": "Одоогоор хүсэлт байхгүй байна.",
+    "encryption": "@:settingsTab.network.encryption",
+    "autoAccept": "Хүсэлтийг автоматаар авах",
+    "requirePin": "PIN код ашиглах",
+    "pinHint": "PIN код: \"{pin}\"",
+    "encryptionHint": "LinkDrop нь өөрийн гарын үсэг ашигладаг тул үүнийг browser дээрээ хүлээн зөвшөөрнө үү.",
+    "pendingRequests": "Хүлээгдэж буй хүсэлт: {n}"
+  },
+  "aboutPage": {
+    "title": "LinkDrop танилцуулга",
+    "description": [
+      "LinkDrop нь үнэгүй, нээлттэй эхийн програм бөгөөд танд интернет холболт шаардлагагүйгээр өөрийн дотоод сүлжээгээр ойролцоох төхөөрөмжүүдтэй файл, мессежийг аюулгүйгээр хуваалцах боломтой.",
+      "Энэ програмыг Android, iOS, macOS, Windows болон Linux дээр ашиглах боломжтой. Та албан ёсны веб сайтнаас татах боломжтой."
+    ],
+    "author": "Эзэмшигч",
+    "contributors": "Хамт тусалсан",
+    "packagers": "Багцын бүтээгчид",
+    "translators": "Орчуулагч нар"
+  },
+  "donationPage": {
+    "title": "Хандив",
+    "info": "LinkDrop нь үнэ төлбөргүй, нээлттэй эх сурвалжтай бөгөөд ямар ч зар сурталчилгаагүй. Хэрэв энэ програм таалагдсан бол хандивын мөнгөөр хөгжлийг дэмжих боломжтой.",
+    "donate": "{amount} аар хандивлах",
+    "thanks": "Маш их баярлалаа!",
+    "restore": "Буцаах"
+  },
+  "changelogPage": {
+    "title": "Шинэчлэлт"
+  },
+  "aliasGenerator(ignoreMissing, ignoreGpt)": {
+    "@info": "Inherits from the English version"
+  },
+  "dialogs": {
+    "addFile": {
+      "title": "Сонголтод нэмэх",
+      "content": "Юу нэмэхийг хүсэж байна вэ?"
+    },
+    "openFile": {
+      "title": "Файл нээх",
+      "content": "Хүлээн авсан файлыг нээхийг хүсэж байна уу?"
+    },
+    "addressInput": {
+      "title": "Хаяг оруулах",
+      "hashtag": "Хэш тэмдэг",
+      "ip": "IP хаяг",
+      "recentlyUsed": "Сүүлд ашигласан: "
+    },
+    "cancelSession": {
+      "title": "Файлын шилжүүлэлтийг цуцлах",
+      "content": "Файлын шилжүүлэлтийг үнэхээр цуцлах уу?"
+    },
+    "cannotOpenFile": {
+      "title": "Файл нээх боломжгүй",
+      "content": "\"{file}\"-г нээх боломжгүй байна. Энэ файл нь зөөгдсөн, нэр нь өөрчлөгдсөн эсвэл устгагдсан уу?"
+    },
+    "encryptionDisabledNotice": {
+      "title": "Криптографчлал идэвхгүй болсон",
+      "content": "Одоо харилцаа нь криптографчлалгүй HTTP протокол ашиглан явагдаж байна. HTTPS протоколыг ашиглахын тулд криптографчлалыг дахин идэвхжүүлэх хэрэгтэй."
+    },
+    "errorDialog": {
+      "title": "@:general.error"
+    },
+    "favoriteDialog": {
+      "title": "Одод",
+      "noFavorites": "Одоогоор дуртай төхөөрөмж байхгүй.",
+      "addFavorite": "Нэмэх"
+    },
+    "favoriteDeleteDialog": {
+      "title": "Ододоос устгах",
+      "content": "\"{name}\"-г дуртай төхөөрөмжөөс үнэхээр устгах уу?"
+    },
+    "favoriteEditDialog": {
+      "titleAdd": "Ододод нэмэх",
+      "titleEdit": "Тохиргоо",
+      "name": "Төхөөрөмжийн нэр",
+      "auto": "(автоматаар)",
+      "ip": "IP хаяг",
+      "port": "Порт"
+    },
+    "fileInfo": {
+      "title": "Файлын мэдээлэл",
+      "fileName": "Файлын нэр:",
+      "path": "Зам:",
+      "size": "Хэмжээ:",
+      "sender": "Илгээгч:",
+      "time": "Цаг:"
+    },
+    "fileNameInput": {
+      "title": "Файлын нэр оруулах",
+      "original": "Анхны: {original}"
+    },
+    "historyClearDialog": {
+      "title": "Түүх цэвэрлэх",
+      "content": "Бүх түүхийг үнэхээр устгах уу?"
+    },
+    "localNetworkUnauthorized": {
+      "title": "@:dialogs.noPermission.title",
+      "description": "LinkDrop нь бусад төхөөрөмжүүдийг олохын тулд орон нутгийн сүлжээг скан хийх зөвшөөрөлгүйгээр ажиллах боломжгүй. Энэ зөвшөөрлийг тохиргоонд олгоно уу.",
+      "gotoSettings": "Тохиргоо"
+    },
+    "messageInput": {
+      "title": "Мессеж бичих",
+      "multiline": "Олон мөр"
+    },
+    "noFiles": {
+      "title": "Файл сонгогдоогүй",
+      "content": "Дор хаяж нэг файл сонгоно уу."
+    },
+    "noPermission": {
+      "title": "Зөвшөөрөл байхгүй",
+      "content": "Шаардлагатай зөвшөөрлийг олгоогүй байна. Тохиргоонд олгоно уу."
+    },
+    "notAvailableOnPlatform": {
+      "title": "Боломжгүй",
+      "content": "Энэ функц зөвхөн дараах платформ дээр боломжтой:"
+    },
+    "qr": {
+      "title": "QR код"
+    },
+    "quickActions": {
+      "title": "Хурдан үйлдлүүд",
+      "counter": "Тоолуур",
+      "prefix": "Угтвар",
+      "padZero": "Тэгээр дүүргэх",
+      "sortBeforeCount": "Өмнөөс нь цагаан толгойн дараалал (A-Z)",
+      "random": "Санамсаргүй"
+    },
+    "quickSaveNotice": {
+      "title": "@:general.quickSave",
+      "content": "Файлын хүсэлтүүд одоо автоматаар хүлээн зөвшөөрөгдөж байна. Орон нутгийн сүлжээний хэн ч танд файл илгээж болно гэдгийг анхаарна уу."
+    },
+    "quickSaveFromFavoritesNotice": {
+      "title": "@:general.quickSaveFromFavorites",
+      "content": [
+        "Файлын хүсэлтүүд одоо таны дуртай төхөөрөмжүүдээс автоматаар хүлээн зөвшөөрөгдөж байна.",
+        "Анхаар! Одоогоор энэ нь бүрэн аюулгүй биш, учир нь таны дуртай төхөөрөмжүүдийн аль нэгний хурууны хээг мэдсэн хакер танд хязгааргүйгээр файл илгээж чадна.",
+        "Гэхдээ энэ сонголт нь орон нутгийн сүлжээний бүх хэрэглэгчдэд хязгааргүй файл илгээх зөвшөөрөл өгөхөөс илүү аюулгүй байдаг."
+      ]
+    },
+    "pin": {
+      "title": "PIN код оруулах"
+    },
+    "sendModeHelp": {
+      "title": "Илгээх горим",
+      "single": "Файлыг нэг хүлээн авагч руу илгээнэ. Файлын шилжүүлэлт дууссаны дараа сонголт цэвэрлэгдэнэ.",
+      "multiple": "Файлыг олон хүлээн авагчдад илгээнэ. Файлын шилжүүлэлт дууссаны дараа сонголт цэвэрлэгдэхгүй.",
+      "link": "LinkDrop суулгаагүй хүлээн авагчид хөтөчөөрөө холбоос нээж сонгогдсон файлуудыг татаж авч чадна."
+    },
+    "zoom": {
+      "title": "URL"
+    }
+  },
+  "sanitization": {
+    "empty": "Файлын нэр хоосон байж болохгүй",
+    "invalid": "Файлын нэрт буруу тэмдэгт агуулагдаж байна"
+  },
+  "tray": {
+    "open": "@:general.open",
+    "close": "LinkDrop-г гаргах",
+    "closeWindows": "Гарах"
+  },
+  "web": {
+    "waiting": "@:sendPage.waiting",
+    "enterPin": "PIN код оруулах",
+    "invalidPin": "Буруу PIN код",
+    "tooManyAttempts": "Хэт олон оролдлого",
+    "rejected": "Үзэгдээгүй",
+    "files": "Файлууд",
+    "fileName": "Файлын нэр",
+    "size": "Хэмжээ"
+  },
+  "assetPicker": {
+    "confirm": "Зөвшөөрөх",
+    "cancel": "Цуцлах",
+    "edit": "Засах",
+    "gifIndicator": "GIF",
+    "loadFailed": "Ачаалахад алдаа гарлаа",
+    "original": "Анхны",
+    "preview": "Урьдчилсан үзэх",
+    "select": "Сонгох",
+    "emptyList": "Хоосон жагсаалт",
+    "unSupportedAssetType": "Дэмжигдэхгүй файлын төрөл.",
+    "unableToAccessAll": "Төхөөрөмжийн бүх файлд хандах боломжгүй",
+    "viewingLimitedAssetsTip": "Зөвхөн апп-д хандах боломжтой файлуудыг харна.",
+    "changeAccessibleLimitedAssets": "Хандах боломжтой файлуудыг шинэчлэхийн тулд дарна уу",
+    "accessAllTip": "Апп нь төхөөрөмжийн зарим файлд хандах боломжтой. Системийн тохиргоон дээр апп-д төхөөрөмжийн бүх медиа файлд хандах зөвшөөрөл олгоно уу.",
+    "goToSystemSettings": "Системийн тохиргоон руу очих",
+    "accessLimitedAssets": "Хязгаарлагдмал хандалттай үргэлжлүүлэх",
+    "accessiblePathName": "Хандах боломжтой файлууд",
+    "sTypeAudioLabel": "Дуу",
+    "sTypeImageLabel": "Зураг",
+    "sTypeVideoLabel": "Видео",
+    "sTypeOtherLabel": "Бусад медиа",
+    "sActionPlayHint": "тоглуулах",
+    "sActionPreviewHint": "урьдчилсан үзэх",
+    "sActionSelectHint": "сонгох",
+    "sActionSwitchPathLabel": "зам өөрчлөх",
+    "sActionUseCameraHint": "камер ашиглах",
+    "sNameDurationLabel": "хэмжээ",
+    "sUnitAssetCountLabel": "тоо"
+  }
+}
