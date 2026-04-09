@@ -4,11 +4,13 @@ class PulseRipple extends StatefulWidget {
   final Widget child;
   final Color color;
   final bool shouldRotate;
+  final double size;
 
   const PulseRipple({
     required this.child,
     required this.color,
     this.shouldRotate = false,
+    this.size = 200,
     super.key,
   });
 
@@ -68,8 +70,8 @@ class _PulseRippleState extends State<PulseRipple> with SingleTickerProviderStat
           child: Transform.scale(
             scale: 1.0 + (value * 0.5),
             child: Container(
-              width: 200,
-              height: 200,
+              width: widget.size,
+              height: widget.size,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: widget.color.withValues(alpha: 0.2),

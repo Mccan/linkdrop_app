@@ -4,6 +4,9 @@ import 'package:linkdrop_app/pages/about_page.dart';
 import 'package:linkdrop_app/pages/general_settings_page.dart';
 import 'package:linkdrop_app/pages/login_page.dart';
 import 'package:linkdrop_app/pages/payment_page.dart';
+import 'package:linkdrop_app/pages/profile_settings_page.dart';
+import 'package:linkdrop_app/pages/redeem_code_page.dart';
+import 'package:linkdrop_app/pages/security_settings_page.dart';
 import 'package:linkdrop_app/pages/why_not_wechat_page.dart';
 import 'package:linkdrop_app/pages/widget/settings_item.dart';
 import 'package:linkdrop_app/provider/auth_provider.dart';
@@ -67,6 +70,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 if (isAuthenticated && user != null) ...[
                   _buildMembershipCard(context, isDark, user),
                   const SizedBox(height: 24),
+                  _buildProfileEntry(context, isDark),
+                  const SizedBox(height: 16),
+                  _buildSecurityEntry(context, isDark),
+                  const SizedBox(height: 16),
+                  _buildRedeemEntry(context, isDark),
+                  const SizedBox(height: 16),
                 ],
                 if (isAuthenticated && user != null) ...[
                   _buildWhyNotWechatEntry(context, isDark),
@@ -140,6 +149,213 @@ class _SettingsPageState extends State<SettingsPage> {
                   const SizedBox(height: 2),
                   Text(
                     '通用、接收、网络设置',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: LinkDropColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: LinkDropColors.textSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 基本信息入口
+  Widget _buildProfileEntry(BuildContext context, bool isDark) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ProfileSettingsPage(),
+            fullscreenDialog: true,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? LinkDropColors.zinc800 : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? LinkDropColors.zinc700 : LinkDropColors.zinc200,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.person_outline,
+                color: Colors.blue,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '基本信息',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : LinkDropColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '修改用户名等个人信息',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: LinkDropColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: LinkDropColors.textSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 安全设置入口
+  Widget _buildSecurityEntry(BuildContext context, bool isDark) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const SecuritySettingsPage(),
+            fullscreenDialog: true,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? LinkDropColors.zinc800 : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? LinkDropColors.zinc700 : LinkDropColors.zinc200,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.lock_outline,
+                color: Colors.green,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '安全设置',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : LinkDropColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '修改密码，保护账号安全',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: LinkDropColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: LinkDropColors.textSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 我的兑换码入口
+  Widget _buildRedeemEntry(BuildContext context, bool isDark) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const RedeemCodePage(),
+            fullscreenDialog: true,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? LinkDropColors.zinc800 : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? LinkDropColors.zinc700 : LinkDropColors.zinc200,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.purple.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.card_giftcard,
+                color: Colors.purple,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '我的兑换码',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : LinkDropColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '输入兑换码获取会员权益',
                     style: TextStyle(
                       fontSize: 13,
                       color: LinkDropColors.textSecondary,

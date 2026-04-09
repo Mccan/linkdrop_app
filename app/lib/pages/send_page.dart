@@ -191,6 +191,11 @@ class _SendPageState extends State<SendPage> with Refena, PermissionControlMixin
                       child: vm.nearbyDevices.isEmpty
                           ? LayoutBuilder(
                               builder: (context, constraints) {
+                                // 根据可用空间自适应扫描动画尺寸
+                                final availableSize = constraints.maxHeight > 0
+                                    ? (constraints.maxHeight * 0.5).clamp(100.0, 200.0)
+                                    : 150.0;
+
                                 return SingleChildScrollView(
                                   child: ConstrainedBox(
                                     constraints: BoxConstraints(
@@ -203,6 +208,7 @@ class _SendPageState extends State<SendPage> with Refena, PermissionControlMixin
                                           PulseRipple(
                                             color: isDark ? LinkDropColors.primary : LinkDropColors.primaryDark,
                                             shouldRotate: true,
+                                            size: availableSize,
                                             child: Icon(
                                               Icons.radar_rounded,
                                               size: isCompactHeight ? 32 : 44,
@@ -1070,99 +1076,107 @@ class _FanFileSelectorState extends State<_FanFileSelector> with SingleTickerPro
 
   @override
   Widget build(BuildContext context) {
-    // 根据可用空间动态计算尺寸
-    final availableHeight = MediaQuery.of(context).size.height;
-    final isVeryCompact = availableHeight < 600;
+    // 使用 LayoutBuilder 获取实际可用空间
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // 根据实际可用高度动态计算尺寸
+        final availableHeight = constraints.maxHeight;
+        final isVeryCompact = availableHeight < 150;
 
-    final centerButtonSize = widget.isCompact ? (isVeryCompact ? 56.0 : 64.0) : 96.0;
-    final optionButtonSize = widget.isCompact ? (isVeryCompact ? 40.0 : 44.0) : 64.0;
-    final fanRadius = widget.isCompact ? (isVeryCompact ? 70.0 : 85.0) : 140.0;
-    final containerHeight = widget.isCompact ? (isVeryCompact ? 160.0 : 180.0) : 300.0;
+        // 根据可用高度自适应计算各组件尺寸
+        final centerButtonSize = widget.isCompact
+            ? (isVeryCompact ? 48.0 : 56.0)
+            : 96.0;
+        final optionButtonSize = widget.isCompact
+            ? (isVeryCompact ? 36.0 : 40.0)
+            : 64.0;
+        // 扇形半径根据容器高度自适应
+        final fanRadius = widget.isCompact
+            ? (isVeryCompact ? 50.0 : 70.0)
+            : 140.0;
 
-    return Container(
-      height: containerHeight,
-      color: Colors.transparent, // 透明背景
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // 扇子展开的选项按钮
-          ...List.generate(_options.length, (index) {
-            final option = _options[index];
-            return AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                // 计算扇形展开位置
-                final angle = option.angle * (math.pi / 180) * _animation.value;
-                final distance = fanRadius * _animation.value;
-                final x = math.sin(angle) * distance;
-                final y = -math.cos(angle) * distance * 0.5; // 稍微压扁，形成扇形
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // 扇子展开的选项按钮
+            ...List.generate(_options.length, (index) {
+              final option = _options[index];
+              return AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  // 计算扇形展开位置
+                  final angle = option.angle * (math.pi / 180) * _animation.value;
+                  final distance = fanRadius * _animation.value;
+                  final x = math.sin(angle) * distance;
+                  final y = -math.cos(angle) * distance * 0.5; // 稍微压扁，形成扇形
 
-                // 使用 clamp 确保 opacity 在 0-1 范围内，避免 easeOutBack 曲线导致的越界
-                final safeOpacity = _animation.value.clamp(0.0, 1.0);
-                final safeScale = (0.5 + (0.5 * _animation.value)).clamp(0.0, 1.0);
+                  // 使用 clamp 确保 opacity 在 0-1 范围内，避免 easeOutBack 曲线导致的越界
+                  final safeOpacity = _animation.value.clamp(0.0, 1.0);
+                  final safeScale = (0.5 + (0.5 * _animation.value)).clamp(0.0, 1.0);
 
-                return Transform.translate(
-                  offset: Offset(x, y),
-                  child: Transform.scale(
-                    scale: safeScale,
-                    child: Opacity(
-                      opacity: safeOpacity,
-                      child: child,
+                  return Transform.translate(
+                    offset: Offset(x, y),
+                    child: Transform.scale(
+                      scale: safeScale,
+                      child: Opacity(
+                        opacity: safeOpacity,
+                        child: child,
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: _FanOptionButton(
-                icon: option.icon,
-                label: option.label,
-                color: option.color,
-                size: optionButtonSize,
-                isDark: widget.isDark,
-                onTap: () => _selectOption(option),
-              ),
-            );
-          }),
-
-          // 中央"+"按钮
-          GestureDetector(
-            onTap: _toggleExpand,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutBack,
-              width: centerButtonSize,
-              height: centerButtonSize,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    LinkDropColors.primary,
-                    LinkDropColors.primaryDark,
-                  ],
+                  );
+                },
+                child: _FanOptionButton(
+                  icon: option.icon,
+                  label: option.label,
+                  color: option.color,
+                  size: optionButtonSize,
+                  isDark: widget.isDark,
+                  onTap: () => _selectOption(option),
                 ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: LinkDropColors.primary.withValues(alpha: 0.4),
-                    blurRadius: _isExpanded ? 20 : 12,
-                    spreadRadius: _isExpanded ? 4 : 2,
-                  ),
-                ],
-              ),
-              child: AnimatedRotation(
-                turns: _isExpanded ? 0.125 : 0, // 旋转45度变成X
+              );
+            }),
+
+            // 中央"+"按钮
+            GestureDetector(
+              onTap: _toggleExpand,
+              child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOutBack,
-                child: Icon(
-                  Icons.add,
-                  size: widget.isCompact ? 36 : 48,
-                  color: Colors.white,
+                width: centerButtonSize,
+                height: centerButtonSize,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      LinkDropColors.primary,
+                      LinkDropColors.primaryDark,
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: LinkDropColors.primary.withValues(alpha: 0.4),
+                      blurRadius: _isExpanded ? 20 : 12,
+                      spreadRadius: _isExpanded ? 4 : 2,
+                    ),
+                  ],
+                ),
+                child: AnimatedRotation(
+                  turns: _isExpanded ? 0.125 : 0, // 旋转45度变成X
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutBack,
+                  child: Icon(
+                    Icons.add,
+                    size: widget.isCompact ? (isVeryCompact ? 28 : 36) : 48,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }

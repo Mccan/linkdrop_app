@@ -7,6 +7,14 @@ import 'package:linkdrop_app/model/payment_order.dart';
 import 'package:linkdrop_app/model/user.dart';
 import 'package:linkdrop_app/util/crypto_helper.dart';
 
+/// 缓存条目
+class _CacheEntry {
+  final dynamic data;
+  final DateTime timestamp;
+
+  _CacheEntry({required this.data, required this.timestamp});
+}
+
 abstract class PaymentApi {
   Future<List<RechargeItem>> getRechargeItems({String? membershipType, int? projectId});
 
@@ -27,7 +35,7 @@ abstract class PaymentApi {
 class ApiService implements PaymentApi {
   // 开发环境使用局域网 IP，方便真机调试
   // static const String _devBaseUrl = 'http://localhost:3000/api';
-  static const String _devBaseUrl = 'http://192.168.0.102:3000/api';
+  static const String _devBaseUrl = 'http://192.168.0.101:3000/api';
   static const String _prodBaseUrl = 'https://toolapi.dearlinkcn.top/api';
 
   static String get _baseUrl {
@@ -51,6 +59,39 @@ class ApiService implements PaymentApi {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
+  // 防止刷新 token 时无限递归
+  bool _isRefreshing = false;
+
+  // ==================== 内存缓存 ====================
+  static const Duration _cacheDuration = Duration(minutes: 5);
+  final Map<String, _CacheEntry> _cache = {};
+
+  /// 获取缓存数据
+  T? _getFromCache<T>(String key) {
+    final entry = _cache[key];
+    if (entry == null) return null;
+    if (DateTime.now().difference(entry.timestamp) > _cacheDuration) {
+      _cache.remove(key);
+      return null;
+    }
+    return entry.data as T?;
+  }
+
+  /// 设置缓存数据
+  void _setCache<T>(String key, T data) {
+    _cache[key] = _CacheEntry(data: data, timestamp: DateTime.now());
+  }
+
+  /// 清除所有缓存
+  void clearCache() {
+    _cache.clear();
+  }
+
+  /// 清除指定缓存
+  void clearCacheKey(String key) {
+    _cache.remove(key);
+  }
+
   ApiService._internal() {
     _storage = const FlutterSecureStorage();
     _dio = Dio(
@@ -61,6 +102,7 @@ class ApiService implements PaymentApi {
         headers: {
           'Content-Type': 'application/json',
         },
+        validateStatus: (statusCode) => true,
       ),
     );
 
@@ -83,39 +125,62 @@ class ApiService implements PaymentApi {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // 自动添加 token
-          final token = await getAccessToken();
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
+          // 自动添加 token（刷新请求不需要）
+          if (!(_isRefreshing && options.path == '/auth/refresh')) {
+            final token = await getAccessToken();
+            if (token != null) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
           }
           return handler.next(options);
         },
         onError: (error, handler) async {
-          // Token 过期时尝试刷新
-          if (error.response?.statusCode == 401) {
+          // Token 过期时尝试刷新（排除刷新请求本身）
+          if (error.response?.statusCode == 401 && !_isRefreshing) {
+            _isRefreshing = true;
             final refreshToken = await getRefreshToken();
             if (refreshToken != null) {
               try {
+                // 直接用 Dio 实例发送请求，跳过拦截器
                 final response = await _dio.post(
                   '/auth/refresh',
-                  data: {
-                    'refresh_token': refreshToken,
-                  },
+                  data: {'refresh_token': refreshToken},
+                  options: Options(
+                    headers: {'Content-Type': 'application/json'},
+                  ),
                 );
                 if (response.data['success'] == true) {
                   final newAccessToken = response.data['data']['accessToken'];
                   final newRefreshToken = response.data['data']['refreshToken'];
                   await setTokens(newAccessToken, newRefreshToken);
                   // 重试原请求
-                  error.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken}';
+                  error.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
+                  _isRefreshing = false;
                   return handler.resolve(await _dio.fetch(error.requestOptions));
+                } else {
+                  // 刷新返回失败，清除 token
+                  await clearTokens();
+                  await clearCachedUser();
                 }
-              } catch (e) {
+              } on DioException catch (e) {
                 // 刷新失败，清除 token
+                debugPrint('Token 刷新失败: ${e.message}');
                 await clearTokens();
+                await clearCachedUser();
+              } catch (e) {
+                debugPrint('Token 刷新异常: $e');
+                await clearTokens();
+                await clearCachedUser();
+              } finally {
+                _isRefreshing = false;
               }
+            } else {
+              // 没有 refresh token，清除状态
+              await clearTokens();
+              await clearCachedUser();
             }
           }
+          _isRefreshing = false;
           return handler.next(error);
         },
       ),
@@ -392,7 +457,19 @@ class ApiService implements PaymentApi {
   ///
   /// [membershipType] 会员类型：'global' 大会员, 'project' 子会员
   /// [projectId] 项目ID，null 表示获取大会员套餐，有值表示获取对应项目的子会员套餐
-  Future<List<RechargeItem>> getRechargeItems({String? membershipType, int? projectId}) async {
+  /// [forceRefresh] 是否强制刷新缓存
+  Future<List<RechargeItem>> getRechargeItems({String? membershipType, int? projectId, bool forceRefresh = false}) async {
+    final cacheKey = 'recharge_items_${membershipType ?? "all"}_${projectId ?? "all"}';
+
+    // 检查缓存
+    if (!forceRefresh) {
+      final cached = _getFromCache<List<RechargeItem>>(cacheKey);
+      if (cached != null) {
+        debugPrint('[Cache] 使用缓存的充值商品列表');
+        return cached;
+      }
+    }
+
     try {
       final queryParams = <String, dynamic>{};
       if (membershipType != null) {
@@ -408,7 +485,9 @@ class ApiService implements PaymentApi {
       );
       if (response.data['success'] == true) {
         final items = response.data['data'] as List;
-        return items.map((item) => RechargeItem.fromJson(item)).toList();
+        final result = items.map((item) => RechargeItem.fromJson(item)).toList();
+        _setCache(cacheKey, result);
+        return result;
       }
       return [];
     } catch (e) {
@@ -420,7 +499,19 @@ class ApiService implements PaymentApi {
   /// 获取会员价格信息（统一接口）
   ///
   /// [projectCode] 项目代码，如 'linkdrop'
-  Future<MembershipPriceResponse?> getMembershipPrices({String? projectCode}) async {
+  /// [forceRefresh] 是否强制刷新缓存
+  Future<MembershipPriceResponse?> getMembershipPrices({String? projectCode, bool forceRefresh = false}) async {
+    final cacheKey = 'membership_prices_${projectCode ?? "all"}';
+
+    // 检查缓存
+    if (!forceRefresh) {
+      final cached = _getFromCache<MembershipPriceResponse>(cacheKey);
+      if (cached != null) {
+        debugPrint('[Cache] 使用缓存的会员价格');
+        return cached;
+      }
+    }
+
     try {
       final queryParams = <String, dynamic>{};
       if (projectCode != null) {
@@ -432,7 +523,9 @@ class ApiService implements PaymentApi {
         queryParameters: queryParams.isNotEmpty ? queryParams : null,
       );
       if (response.data['success'] == true) {
-        return MembershipPriceResponse.fromJson(response.data['data']);
+        final result = MembershipPriceResponse.fromJson(response.data['data']);
+        _setCache(cacheKey, result);
+        return result;
       }
       return null;
     } catch (e) {
@@ -532,7 +625,19 @@ class ApiService implements PaymentApi {
 
   /// 获取用户会员状态
   /// [projectId] 项目ID，可选
-  Future<MembershipStatusResponse?> getMembershipStatus({int? projectId}) async {
+  /// [forceRefresh] 是否强制刷新缓存
+  Future<MembershipStatusResponse?> getMembershipStatus({int? projectId, bool forceRefresh = false}) async {
+    final cacheKey = 'membership_status_${projectId ?? "all"}';
+
+    // 检查缓存
+    if (!forceRefresh) {
+      final cached = _getFromCache<MembershipStatusResponse>(cacheKey);
+      if (cached != null) {
+        debugPrint('[Cache] 使用缓存的会员状态');
+        return cached;
+      }
+    }
+
     try {
       final queryParams = projectId != null ? {'project_id': projectId} : null;
       final response = await _dio.get(
@@ -540,7 +645,9 @@ class ApiService implements PaymentApi {
         queryParameters: queryParams,
       );
       if (response.data['success'] == true) {
-        return MembershipStatusResponse.fromJson(response.data['data']);
+        final result = MembershipStatusResponse.fromJson(response.data['data']);
+        _setCache(cacheKey, result);
+        return result;
       }
       return null;
     } catch (e) {
@@ -577,6 +684,106 @@ class ApiService implements PaymentApi {
       };
     }
   }
+
+  // ==================== 用户信息 ====================
+
+  /// 更新用户基本信息
+  Future<Map<String, dynamic>> updateProfile(String username) async {
+    try {
+      final response = await _dio.put(
+        '/auth/profile',
+        data: {'username': username},
+      );
+      return {
+        'success': response.data['success'] == true,
+        'message': response.data['message'],
+        'data': response.data['data'],
+      };
+    } catch (e) {
+      debugPrint('更新用户信息失败: $e');
+      return {
+        'success': false,
+        'message': '更新失败，请稍后重试',
+      };
+    }
+  }
+
+  /// 修改密码
+  Future<Map<String, dynamic>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/auth/change-password',
+        data: {
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+        },
+      );
+      return {
+        'success': response.data['success'] == true,
+        'message': response.data['message'],
+      };
+    } catch (e) {
+      debugPrint('修改密码失败: $e');
+      return {
+        'success': false,
+        'message': '修改失败，请稍后重试',
+      };
+    }
+  }
+
+  // ==================== 兑换码 ====================
+
+  /// 兑换码兑换
+  /// [code] 兑换码
+  /// [projectCode] 项目代码，默认 'linkdrop'
+  Future<RedeemResult> redeemCoupon(String code, {String projectCode = 'linkdrop'}) async {
+    try {
+      final response = await _dio.post(
+        '/coupons/redeem',
+        data: {
+          'code': code,
+          'project_code': projectCode,
+        },
+      );
+
+      if (response.data['success'] == true) {
+        return RedeemResult(
+          success: true,
+          type: response.data['data']?['type'] ?? 'vip',
+          projectName: response.data['data']?['project_name'],
+        );
+      } else {
+        return RedeemResult(
+          success: false,
+          message: response.data['message'] ?? response.data['msg'] ?? '兑换失败',
+        );
+      }
+    } catch (e) {
+      debugPrint('兑换码兑换失败: $e');
+      return RedeemResult(
+        success: false,
+        message: '兑换失败，请稍后重试',
+      );
+    }
+  }
+}
+
+/// 兑换结果
+class RedeemResult {
+  final bool success;
+  final String? message;
+  final String? type; // 'svip' 或 'vip'
+  final String? projectName;
+
+  const RedeemResult({
+    required this.success,
+    this.message,
+    this.type,
+    this.projectName,
+  });
 }
 
 /// 登录结果
